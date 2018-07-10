@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+</head>
+<body>
+<div class="user_top">
+    <a href1="/User/Reface"><img id="user_face" src="{php echo $this->user['avatar']}"></a>
+    <a class="u" href1="/Weixin/Rename">{php echo $this->user['name']}</a><span class="s"><span>钢铁人联盟</span><span id="uinfo">（{if $this->user['type']==1}供应{elseif $this->user['type']==2}采购{else}运输{/if}）</span></span>
+</div>
+<div class="big_buttons">
+    <a href="{php echo $this->createMobileUrl('mynews')}">我的发布</a>
+    <a href="{php echo $this->createMobileUrl('myfollow')}">我的收藏</a>
+    <a href="{php echo $this->createMobileUrl('mylinkman')}">我的联系人</a>
+    <!--<a href="/User/InsureMenu">我的保险</a>-->
+    <a href="{php echo $this->createMobileUrl('myinfo')}">我的资料</a>
+    <a href="{php echo $this->createMobileUrl('myserve')}">我的服务</a>
+    <a href="{php echo $this->createMobileUrl('myidea')}">意见建议</a>
+</div>
+</body>
+
+</html>

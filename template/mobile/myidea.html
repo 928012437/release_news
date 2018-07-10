@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>意见建议</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+</head>
+<body>
+<div class="mtitle" style="margin-bottom: 0;">
+    <a class="back" href="javascript:history.back()">意见建议</a>
+</div>
+<form class="xform" id="form" action="" method="post" >
+    <dl>
+        <dd><textarea name="content" placeholder="请输入您的宝贵意见或建议" maxlength="1000" style="height:120px;"></textarea></dd>
+    </dl>
+    <a class="submit" href="javascript:document.getElementById('form').submit();" >提交</a>
+</form>
+</body>
+</html>

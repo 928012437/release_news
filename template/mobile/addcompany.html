@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的企业</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+
+</head>
+<body>
+<div class="mtitle" style="margin-bottom: 0;">
+    <a class="back" href="javascript:history.back()">我的企业</a>
+</div>
+<form class="xform" id="form" action="" method="post" enctype="multipart/form-data" >
+
+    <dl>
+        <dt>企业名称：</dt>
+        <dd><input name="name" maxlength="20" placeholder="请输入企业名称" check="请输入企业名称"></dd>
+    </dl>
+    <!--<dl>-->
+        <!--<dt>企业类型：</dt>-->
+        <!--<dd>-->
+            <!--<label><input id="xtype0" type="radio" name="type" checked="">货代</label>-->
+            <!--<label><input id="xtype1" type="radio" name="type" style="margin-left: 7px;">车队</label>-->
+            <!--<label><input id="xtype2" type="radio" name="type" style="margin-left: 7px;">船东</label>-->
+        <!--</dd>-->
+    <!--</dl>-->
+    <dl>
+        <dt>所在区域：</dt>
+        <dd>
+            <div class="mplace" id="place" onclick="document.getElementsByClassName('MWin')[0].style.display='block'">
+                {php echo $this->user['address']!=''?$this->user['address']:'全国'}
+            </div>
+        </dd>
+    </dl>
+    <dl>
+        <dt>详细地址：</dt>
+        <dd><input name="address_ex" maxlength="100"></dd>
+    </dl>
+    <dl>
+        <dt>联系人：</dt>
+        <dd><input name="contactname" maxlength="10"></dd>
+    </dl>
+    <dl>
+        <dt>联系手机：</dt>
+        <dd><input type="number" name="contactmobile" maxlength="11" ></dd>
+    </dl>
+    <dl>
+        <dt>联系电话：</dt>
+        <dd><input name="tel" maxlength="50"></dd>
+    </dl>
+    <dl style="display: none">
+        <dt>业务港口：</dt>
+        <dd><input name="businessarea"></dd>
+    </dl>
+    <dl>
+        <dt>企业简介：</dt>
+        <dd><textarea name="content" style="height:80px;" ></textarea></dd>
+    </dl>
+    <dl>
+        <dt>企业图片：</dt>
+        <input type="file" style="display: none;" onchange="uploadthumb(this)" name="thumb" >
+        <dd id="imgbox"><img id="thumb" src="/addons/release_news/static/img/nopic.jpg" onclick="fileselect()" style="width:60px;height:60px;"></dd>
+        <dd class="r" onclick="fileselect(this)" ><a class="btn" style="margin-top:20px;">上传图片</a></dd>
+    </dl>
+    <input type="hidden" name="address" value="{php echo $this->user['address']?$this->user['address']:'全国'}" >
+    <a class="submit" href="javascript:document.getElementById('form').submit()">保存</a>
+</form>
+
+<div class="MWin" style="z-index: 1000; display: none;" onclick="document.getElementsByClassName('MWin')[0].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;">
+                    <div class="MWinTitle">
+                        <div class="t">
+                            区域定位
+                        </div>
+                        <div class="x">
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;" onclick="stopBubble(this)" >
+                        <div id="win_place_list">
+                            <ul class="portlist">
+                                <li><b>区域</b><a onclick="changeaddress('全国',this)" {if $this->user['address']=='全国'||$this->user['address']==''}class="on"{/if} >全国</a></li>
+
+                                {loop $area $v}
+                                <li>
+                                    <b onclick="changeaddress('{$v['name']}',this)" {if $this->user['address']==$v['name']}class="on"{/if} >{$v['name']}</b>
+                                    {loop $v['city'] $c}
+                                    <a onclick="changeaddress('{$c['name']}',this)" {if $this->user['address']==$c['name']}class="on"{/if} >{$c['name']}</a>
+                                    {/loop}
+                                </li>
+                                {/loop}
+
+                            </ul>
+                        </div>
+                        <a class="submit margin" href="javascript:choseaddress()">确认</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    address="{php echo $this->user['address']?$this->user['address']:'全国'}";
+
+        function uploadthumb(obj) {
+            var file = obj.files[0];
+
+            if(file){
+                var r = new FileReader();
+                r.readAsDataURL(file);
+                r.onload=function(evt) {
+                    document.getElementById('thumb').src=evt.target.result;
+                }
+            }
+
+        }
+
+    function fileselect(){
+        document.getElementsByName('thumb')[0].click();
+    }
+    function choseaddress(){
+        document.getElementById('place').innerText=address;
+        document.getElementsByName('address')[0].value=address;
+        document.getElementsByClassName('MWin')[0].style.display='none';
+    }
+</script>
+
+</body>
+
+</html>

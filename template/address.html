@@ -1,0 +1,114 @@
+{template 'common/header'}
+<ul class="nav nav-tabs">
+    <button class="btn btn-default" onclick="change(1)">添加</button>
+    <button class="btn btn-default" onclick="location.href='{php echo $this->createWebUrl('set')}'">返回</button>
+</ul>
+
+<div class="panel-heading">一级区域管理</div>
+
+<div class="main">
+
+    <div style="padding: 15px;">
+        <table class="table table-hover table-striped table-condensed">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="text-align: center;">名称</th>
+                <th style="text-align: center;">状态</th>
+                <th style="text-align: center;width: 240px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td style="text-align: center;">{$item['name']}</td>
+                <td style="text-align: center;">{if empty($item['status'])}隐藏{else}显示{/if}</td>
+                <td style="text-align: center;">
+                    <a href="{php echo $this->createWebUrl('city',array('aid'=>$item['id']))}" title="添加下级" class="btn btn-small">添加下级</a>
+                    <a href="javascript:change(2,'{$item['id']}','{$item['name']}','{$item['status']}')" title="编辑" class="btn btn-small">编辑</a>
+                    <a href="javascript:deleteaddress('{$item['id']}')" title="删除" class="btn btn-small">删除</a>
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+
+        </table>
+        {$pager}
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="post" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+
+                    </h4>
+                </div>
+                <div class="modal-body"  >
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="name" class="form-control" value="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <label class="radio-inline"> <input type="radio" name="status" id="status1" value="1">显示</label>
+                            <label class="radio-inline"> <input type="radio" name="status" id="status2" value="0">隐藏</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="id" value="">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">
+                        关闭
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        提交更改
+                    </button>
+                </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script>
+        function change(type,id,name,status){
+            if(type==1){
+                $("#myModalLabel").text('添加');
+                $("input[name='id']").val('');
+                $("input[name='name']").val('');
+                $("#status1").prop('checked',true);
+            }else if(type==2){
+                $("#myModalLabel").text('编辑');
+                $("input[name='id']").val(id);
+                $("input[name='name']").val(name);
+                if(status=='1'){
+                    $("#status1").prop('checked',true);
+                }else {
+                    $("#status2").prop('checked',true);
+                }
+            }
+
+            $("#myModal").modal();
+        }
+
+        function deleteaddress(id){
+            if(confirm('是否删除？')){
+                var url="{php echo $this->createWebUrl('address',array('delete1'=>1))}"+"&id="+id;
+                location.href=url;
+            }
+        }
+    </script>
+</div>
+
+{template 'common/footer'}

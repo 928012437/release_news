@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://we7.cc" versionCode="0.5,0.51,0.52">
+    <application setting="false">
+        <name><![CDATA[信息发布]]></name>
+        <identifie><![CDATA[release_news]]></identifie>
+        <version><![CDATA[1.0]]></version>
+        <type><![CDATA[activity]]></type>
+        <ability><![CDATA[信息发布]]></ability>
+        <description><![CDATA[信息发布]]></description>
+        <author><![CDATA[sdweihu]]></author>
+        <url><![CDATA[we7.cc]]></url>
+    </application>
+    <platform>
+        <subscribes>
+        </subscribes>
+        <handles>
+            <message type="text" />
+        </handles>
+        <rule embed="true" />
+    </platform>
+    <bindings>
+        <cover>
+            <entry title="发布信息入口" do="news" state="" />
+            <entry title="发布企业入口" do="company" state="" />
+            <entry title="个人中心入口" do="home" state="" />
+        </cover>
+        <menu>
+            <entry title="用户管理" do="users" state="" />
+            <entry title="信息管理" do="news" state="" />
+            <entry title="企业名录管理" do="company" state="" />
+            <entry title="区域管理" do="address" state="" />
+            <entry title="意见建议管理" do="idea" state="" />
+            <entry title="基础设置" do="set" state="" />
+        </menu>
+    </bindings>
+
+</manifest>

@@ -1,0 +1,51 @@
+{template 'common/header'}
+
+<style>
+    .pagination{
+        float: right;
+    }
+</style>
+
+<ul class="nav nav-tabs">
+    <form action=""  method="post" >
+        <input type="text" name="keyword" class="form-control" style="width:40%;float:left;" value="{$_GPC['keyword']}" placeholder="内容" >
+        <button type="submit" class="btn btn-default" >搜索</button>
+    </form>
+</ul>
+
+<div class="main">
+
+    <div style="padding: 15px;">
+        <table class="table table-hover table-striped table-condensed">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="text-align: center;">名称</th>
+                <th style="text-align: center;">电话</th>
+                <th style="text-align: center;">发布时间</th>
+                <th style="text-align: center;">内容</th>
+                <th style="text-align: center;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td style="text-align: center;">{$item['name']}</td>
+                <td style="text-align: center;">{$item['mobile']}</td>
+                <td style="text-align: center;">{php echo date('Y-m-d H:i:s',$item['createtime'])}</td>
+                <td style="text-align: center;">
+                    {$item['content']}
+                </td>
+                <td style="text-align: center;">
+                    <a href="{php echo $this->createWebUrl('idea',array('delete1'=>1,'id'=>$item['id']))}" onclick="return confirm('确认删除此条？');return false;" title="删除" class="btn btn-small">删除</a>
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+
+        </table>
+        {$pager}
+    </div>
+
+</div>
+
+{template 'common/footer'}

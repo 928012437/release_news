@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的联系人</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+</head>
+<body>
+<div class="mtitle" style="margin-bottom: 0;">
+    <a class="back" href="javascript:history.back()">我的联系人</a>
+</div>
+<div class="olist" id="data">
+    {loop $list $v}
+    <a id="info_{$v['id']}" >
+        <dl onclick="location.href='{php echo $this->createMobileUrl('chat',array('touid'=>$v['fromuid']))}'" >
+            <dt><i style="background-image:url({$v['avatar']})"></i></dt>
+            <dd>
+                <div class="title">
+                    <span class="name">{$v['name']}</span><span style="margin-left: 5px;margin-right: 5px;" >{$v['timestr']}</span><span>{$v['address2']}</span>
+                </div>
+                <div class="content">
+                    <div class="inner" style="overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;" >
+                        {$v['content']}
+                    </div>
+                </div>
+            </dd>
+        </dl>
+    </a>
+    {/loop}
+</div>
+
+
+</body>
+
+<script>
+    window.onscroll = function(){
+        if(getScrollTop() + getWindowHeight() == getScrollHeight()){
+            getlist();
+        }
+    };
+    page=1;
+
+    function getlist(){
+        var url="{php echo $this->createMobileUrl('getmylinkmanlistajax')}";
+        var page_sub=++page;
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                page:page_sub
+            },
+            success:function(res){
+                document.getElementById('data').insertAdjacentHTML('beforeend',res.data);
+            }
+        })
+    }
+
+</script>
+
+</html>

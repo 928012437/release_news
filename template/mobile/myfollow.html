@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的收藏</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+</head>
+<body>
+<div class="mtitle" style="margin-bottom: 0;">
+    <a class="back" href="javascript:history.back()">我的收藏</a>
+</div>
+<div class="olist" id="data">
+    {loop $list $v}
+    <a id="info_{$v['id']}" >
+    <dl>
+        <dt onclick="showUser('{$v['uid']}')"><i style="background-image:url({$v['avatar']})"></i></dt>
+        <dd onclick="showInfo('{$v['id']}')">
+            <div class="title">
+                <span class="name">{$v['name']}</span><span style="margin-left: 5px;margin-right: 5px;" >{$v['timestr']}</span><span>{$v['address']}</span>
+                <span class="xtype" style="color:{if $v['type']==1}red{elseif $v['type']==2}green{elseif $v['type']==3}blue{/if};">{if $v['type']==1}供{elseif $v['type']==2}采{elseif $v['type']==3}运{/if}</span>
+            </div>
+            <div class="content">
+                <div class="inner">
+                    {$v['content']}
+                </div>
+            </div>
+        </dd>
+    </dl>
+    </a>
+    {/loop}
+</div>
+
+<div class="MWin" style="z-index: 1002; display: none;" onclick="document.getElementsByClassName('MWin')[0].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;" onclick="stopBubble(this)" >
+                    <div class="MWinTitle">
+                        <div class="t">
+                            货源信息
+                        </div>
+                        <div class="x">
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;">
+                        <div id="win_post">
+
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="MWin" style="z-index: 1005;display: none;" onclick="document.getElementsByClassName('MWin')[1].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;" onclick="stopBubble(this)" >
+                    <div class="MWinTitle">
+                        <div class="t">
+                            用户信息
+                        </div>
+                        <div class="x">
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;">
+                        <div id="win_user">
+
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+
+<script>
+    window.onscroll = function(){
+        if(getScrollTop() + getWindowHeight() == getScrollHeight()){
+            getlist();
+        }
+    };
+    page=1;
+
+    function getlist(){
+        var url="{php echo $this->createMobileUrl('getmyfollowlistajax')}";
+        var page_sub=++page;
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                page:page_sub
+            },
+            success:function(res){
+                document.getElementById('data').insertAdjacentHTML('beforeend',res.data);
+            }
+        })
+    }
+    function showInfo(id){
+        var url="{php echo $this->createMobileUrl('getnewsinfoajax')}";
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id:id
+            },
+            success:function(res){
+                if(typeof res!='object'){
+                    document.getElementById('win_post').innerHTML=res;
+                    document.getElementsByClassName('MWin')[0].style.display='block'
+                }
+            }
+        })
+    }
+    function showUser(uid){
+        var url="{php echo $this->createMobileUrl('getnewsuserajax')}";
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id:uid
+            },
+            success:function(res){
+                if(typeof res!='object'){
+                    document.getElementById('win_user').innerHTML=res;
+                    document.getElementsByClassName('MWin')[1].style.display='block'
+                }
+            }
+        })
+    }
+    function changefollow(id,obj){
+        var url="{php echo $this->createMobileUrl('followajax')}";
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id:id
+            },
+            success:function(res){
+                if(typeof res!='object'){
+                    if(res==2){
+                        document.getElementById('data').removeChild(document.getElementById('info_'+id));
+                        document.getElementsByClassName('MWin')[0].style.display='none';
+                        Check.msg(1,'取消成功');
+                    }
+                }
+            }
+        })
+
+    }
+</script>
+
+</html>

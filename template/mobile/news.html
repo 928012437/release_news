@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>查看信息</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+</head>
+<body>
+<div id="page_">
+    <div style="position: fixed;top: 0;left: 0;width: 100%;background-color: white;    z-index: 99;" >
+    <div class="tsearch">
+        <div class="place" onclick="document.getElementsByClassName('MWin')[0].style.display='block'" >
+            <div class="mplace" id="place" >
+                {php echo $this->user['address']?$this->user['address']:'全国'}
+            </div>
+        </div>
+        <u class="main" ><s></s><input id="s_kw" placeholder="请输入关键字" ></u><a onclick="changekeyword();"><i id="info_num" >{$total}</i>搜</a>
+    </div>
+    <ul class="top_bar" style="margin-bottom: 0;">
+        <li id="tab0" onclick="changetype(0,this)" class="on">全部</li>
+        <li id="tab1" onclick="changetype(1,this)">供应</li>
+        <li id="tab2" onclick="changetype(2,this)">采购</li>
+        <li id="tab3" onclick="changetype(3,this)">运输</li>
+    </ul>
+    </div>
+    <!--<div class="xtip" id="newmsg" style="display: none;">-->
+        <!--收到 1 条新的信息，自动刷新中..-->
+    <!--</div>-->
+    <div class="olist" id="data" style="margin-top: 92px;">
+        {loop $list $v}
+        <a id="info_{$v['id']}" {if in_array($v['id'],$followarr)}class="follow"{/if} >
+            <dl>
+                <dt onclick="showUser('{$v['uid']}')"><i style="background-image:url({$v['avatar']})"></i></dt>
+                <dd onclick="showInfo('{$v['id']}')">
+                    <div class="title">
+                        <span class="name">{$v['name']}</span><span style="margin-left: 5px;margin-right: 5px;" >{$v['timestr']}</span><span>{$v['address']}</span>
+                        <span class="xtype" style="color:{if $v['type']==1}red{elseif $v['type']==2}green{elseif $v['type']==3}blue{/if};">{if $v['type']==1}供{elseif $v['type']==2}采{elseif $v['type']==3}运{/if}</span>
+                    </div>
+                    <div class="content">
+                        <div class="inner">
+                            {$v['content']}
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+        </a>
+        {/loop}
+    </div>
+</div>
+
+<div class="record pencil" style="position:fixed;right:20px;bottom:0;opacity:0.8;">
+    <a href="{php echo $this->createMobileUrl('addnews')}"></a>
+</div>
+
+<div class="MWin" style="z-index: 1001;display: none;" onclick="document.getElementsByClassName('MWin')[0].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;">
+                    <div class="MWinTitle">
+                        <div class="t">
+                            区域定位
+                        </div>
+                        <div class="x">
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;" onclick="stopBubble(this)" >
+                        <div id="win_place_list">
+                            <ul class="portlist">
+                                <li><b>区域</b><a onclick="changeaddress('全国',this)" {if $this->user['address']=='全国'||$this->user['address']==''}class="on"{/if} >全国</a></li>
+
+                                {loop $area $v}
+                                <li>
+                                    <b onclick="changeaddress('{$v['name']}',this)" {if $this->user['address']==$v['name']}class="on"{/if} >{$v['name']}</b>
+                                    {loop $v['city'] $c}
+                                    <a onclick="changeaddress('{$c['name']}',this)" {if $this->user['address']==$c['name']}class="on"{/if} >{$c['name']}</a>
+                                    {/loop}
+                                </li>
+                                {/loop}
+
+                            </ul>
+                        </div>
+                        <a class="submit margin" href="javascript:choseaddress()">确认</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="MWin" style="z-index: 1002; display: none;" onclick="document.getElementsByClassName('MWin')[1].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;" onclick="stopBubble(this)" >
+                    <div class="MWinTitle">
+                        <div class="t">
+                            货源信息
+                        </div>
+                        <div class="x" onclick="document.getElementsByClassName('MWin')[1].style.display='none'" >
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;">
+                        <div id="win_post">
+
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="MWin" style="z-index: 1005;display: none;" onclick="document.getElementsByClassName('MWin')[2].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;" onclick="stopBubble(this)" >
+                    <div class="MWinTitle">
+                        <div class="t">
+                            用户信息
+                        </div>
+                        <div class="x" onclick="document.getElementsByClassName('MWin')[2].style.display='none'" >
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;">
+                        <div id="win_user">
+
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+<script>
+    window.onscroll = function(){
+        if(getScrollTop() + getWindowHeight() == getScrollHeight()){
+            getlist();
+        }
+    };
+    address="{php echo $this->user['address']?$this->user['address']:'全国'}";
+    page=1;
+    keyword='';
+    type=0;
+
+    function choseaddress(){
+        document.getElementsByClassName('MWin')[0].style.display='none';
+        page=0;
+        document.getElementById('place').innerText=address;
+        document.getElementById('data').innerHTML='';
+        getlist();
+    }
+    function changekeyword(){
+        keyword=document.getElementById('s_kw').value;
+        page=0;
+        document.getElementById('data').innerHTML='';
+        getlist();
+    }
+    function changetype(num,obj){
+        type=num;
+        page=0;
+        var tarr=document.getElementsByClassName('top_bar')[0].getElementsByTagName("li");;
+        for(var i = 0; i < tarr.length; i++){
+            tarr[i].classList.remove("on");
+        }
+        obj.classList.add('on');
+        document.getElementById('data').innerHTML='';
+        getlist();
+    }
+    function getlist(){
+        var url="{php echo $this->createMobileUrl('getlistajax')}";
+        var page_sub=++page,keyword_sub=keyword,type_sub=type,address_sub=address;
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                page:page_sub,
+                keyword:keyword_sub,
+                type:type_sub,
+                address:address_sub
+            },
+            success:function(res){
+                    document.getElementById('info_num').innerText=res.total;
+                    document.getElementById('data').insertAdjacentHTML('beforeend',res.data);
+            }
+        })
+    }
+    function showInfo(id){
+        var url="{php echo $this->createMobileUrl('getnewsinfoajax')}";
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id:id
+            },
+            success:function(res){
+                if(typeof res!='object'){
+                    document.getElementById('win_post').innerHTML=res;
+                    document.getElementsByClassName('MWin')[1].style.display='block'
+                }
+            }
+        })
+    }
+    function showUser(uid){
+        var url="{php echo $this->createMobileUrl('getnewsuserajax')}";
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id:uid
+            },
+            success:function(res){
+                if(typeof res!='object'){
+                    document.getElementById('win_user').innerHTML=res;
+                    document.getElementsByClassName('MWin')[2].style.display='block'
+                }
+            }
+        })
+    }
+    function changefollow(id,obj){
+        var url="{php echo $this->createMobileUrl('followajax')}";
+        ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id:id
+            },
+            success:function(res){
+                if(typeof res!='object'){
+                    if(res==1){
+                        Check.msg(1,'收藏成功');
+                        obj.innerHTML='取消收藏';
+                        document.getElementById('info_'+id).classList.add("follow");
+                    }else if(res==2) {
+                        Check.msg(1,'取消成功');
+                        obj.innerHTML='收藏';
+                        document.getElementById('info_'+id).classList.remove("follow");
+                    }
+                }
+            }
+        })
+
+    }
+</script>
+</html>

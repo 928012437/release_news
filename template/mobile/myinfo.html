@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户资料</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+</head>
+<body>
+<div class="mtitle" style="margin-bottom: 0;">
+    <a class="back" href="javascript:history.back()">我的资料</a>
+</div>
+<form class="xform" id="form" action="" method="post">
+    <dl>
+        <dt><em>*</em>名称：</dt>
+        <dd><input name="name" maxlength="10" check="请输入名称" value="{php echo  $this->user['name']}"></dd>
+    </dl>
+
+    <dl>
+        <dt><em>*</em>手机：</dt>
+        <dd><input type="number" name="mobile" maxlength="11" value="{php echo  $this->user['mobile']}" ></dd>
+    </dl>
+    <dl>
+        <dt><em>*</em>区域：</dt>
+        <dd>
+            <div class="mplace" id="place" onclick="document.getElementsByClassName('MWin')[0].style.display='block'" >
+                {php echo $this->user['address2']?$this->user['address2']:'全国'}
+            </div>
+        </dd>
+    </dl>
+    <dl>
+        <dt><em>*</em>身份：</dt>
+        <dd>
+            <label><input id="xtype0" type="radio" name="type" value="1" {if $this->user['type']==1}checked{/if} >供应</label>
+            <label><input id="xtype1" type="radio" name="type" value="2" {if $this->user['type']==2}checked{/if} style="margin-left: 7px;">采购</label>
+            <label><input id="xtype2" type="radio" name="type" value="3" {if $this->user['type']==3}checked{/if} style="margin-left: 7px;">运输</label>
+        </dd>
+    </dl>
+    <input type="hidden" name="address" value="{php echo $this->user['address2']?$this->user['address2']:'全国'}" >
+    <a class="submit" href="javascript:document.getElementById('form').submit()">保存</a>
+</form>
+
+<div class="MWin" style="z-index: 1001;display: none;" onclick="document.getElementsByClassName('MWin')[0].style.display='none'" >
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div class="MWinBox" style="width: 310px;">
+                    <div class="MWinTitle">
+                        <div class="t">
+                            区域定位
+                        </div>
+                        <div class="x">
+                        </div>
+                    </div>
+                    <div class="MWinBody" style="height: auto;" onclick="stopBubble(this)" >
+                        <div id="win_place_list">
+                            <ul class="portlist">
+                                <li><b>区域</b><a onclick="changeaddress('全国',this)" {if $this->user['address2']=='全国'||$this->user['address2']==''}class="on"{/if} >全国</a></li>
+
+                                {loop $area $v}
+                                <li>
+                                    <b onclick="changeaddress('{$v['name']}',this)" {if $this->user['address2']==$v['name']}class="on"{/if} >{$v['name']}</b>
+                                    {loop $v['city'] $c}
+                                    <a onclick="changeaddress('{$c['name']}',this)" {if $this->user['address2']==$c['name']}class="on"{/if} >{$c['name']}</a>
+                                    {/loop}
+                                </li>
+                                {/loop}
+
+                            </ul>
+                        </div>
+                        <a class="submit margin" href="javascript:choseaddress()">确认</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    address="{php echo $this->user['address2']?$this->user['address2']:'全国'}";
+    function choseaddress(){
+        document.getElementById('place').innerText=address;
+        document.getElementsByName('address')[0].value=address;
+        document.getElementsByClassName('MWin')[0].style.display='none';
+    }
+</script>
+
+</body>
+
+</html>

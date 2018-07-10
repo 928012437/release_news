@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>与{$touser['name']}对话中...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0">
+    <link href="{php echo $_W['siteroot']}addons/release_news/static/base.css?v=135" rel="stylesheet">
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/base.js?v=135"></script>
+    <script src="{php echo $_W['siteroot']}addons/release_news/static/data.js?v=135"></script>
+    {php echo register_jssdk(false);}
+    <script type="text/javascript" src="https://cdn-hangzhou.goeasy.io/goeasy.js"></script>
+    <style>
+        .more_data{padding: 5px 5px;}
+    </style>
+</head>
+<body>
+<div id="msgbox" style="position:absolute;top:0px;bottom:200px;left:0;right:0;overflow:auto;background:#f6f6f6;">
+    <div class="xmsg" id="data" style="padding:10px;margin:0;">
+        {loop $log $v}
+        <div class="item {if $v['fromuid']==$fromuid}mine{/if}">
+            <div class="time">
+                {php echo date('m-d H:i:s',$v['createtime'])}
+            </div>
+            <div class="content">
+                {$v['content']}
+            </div>
+        </div>
+        {/loop}
+    </div>
+    <div id="msg_end" style="height:1px; overflow:hidden"></div>
+</div>
+<div style="position:absolute;bottom:0;left:0;right:0;">
+    <form class="xform" onsubmit="return false" style="margin:0px;">
+        <dl>
+            <dd style="padding:5px 6px;">
+                <textarea id="content_pre" placeholder="请输入要发送的消息" check="请输入要发送的消息" maxlength="200" style="height:40px;"></textarea>
+            </dd>
+            <dd class="r" onclick="chat_send()" style="background:#f60;color:#fff;text-align:center;line-height:60px;width:80px;">发送</dd>
+        </dl>
+    </form>
+    <div class="record" onclick="voiceshibie()" >
+        <a id="record"></a><b id="record_msg">点击按钮，语音输入</b>
+    </div>
+</div>
+</body>
+
+<script>
+
+    var goEasy = new GoEasy({
+        appkey: 'BC-50e308b01f6b477a8dc9358ae08e944c'
+    });
+    goEasy. subscribe({
+        channel: 'channel'+'{$fromuid}',
+        onMessage: function(message){
+            var myDate = new Date();
+            var month =  ("0" + (myDate.getMonth() + 1)).slice(-2);
+            var html='<div class="item"><div class="time">'+month+'-'+myDate.getDate()+' '+myDate.getHours()+':'+myDate.getMinutes()+':'+myDate.getSeconds()+'</div><div class="content">'+message.content+'</div></div>';
+            document.getElementById('data').insertAdjacentHTML('beforeend',html);
+            document.getElementById('msg_end').scrollIntoView();
+        }
+    });
+
+    flag_send=true;
+    flag_sb=true;
+    touid="{$touid}";
+    lastlogid="{php echo $log[count($log)-1]['id']}";
+    document.getElementById('msg_end').scrollIntoView();
+//    document.getElementById('data').scrollTop=document.getElementById('data').scrollHeight;
+
+    function chat_send(){
+        if(flag_send){
+            flag_send=false;
+            var content=document.getElementById('content_pre').value;
+            var url="{php echo $this->createMobileUrl('chat')}";
+            var touid_sub=touid;
+            if(content==''){
+                Check.msg(1,'消息不能为空');return false;
+            }
+            ajax({
+                url:url,
+                type:'POST',
+                data:{
+                    touid:touid_sub,
+                    content:content
+                },
+                success:function(res){
+                    flag_send=true;
+                    if(res==1){
+                        document.getElementById('content_pre').value='';
+                        goEasy.publish({
+                            channel: "channel"+'{$touid}',
+                            message: content,
+                            onSuccess: function(message) {
+                                var myDate = new Date();
+                                var month = ("0" + (myDate.getMonth() + 1)).slice(-2);
+                                var html='<div class="item mine"><div class="time">'+month+'-'+myDate.getDate()+' '+myDate.getHours()+':'+myDate.getMinutes()+':'+myDate.getSeconds()+'</div><div class="content">'+content+'</div></div>';
+                                document.getElementById('data').insertAdjacentHTML('beforeend',html);
+                                document.getElementById('msg_end').scrollIntoView();
+                            },
+                            onFailed: function(error) {
+                                alert("消息发送失败，错误编码：" + error.code + " 错误信息：" + error.content);
+                            }
+                        })
+                    }else{
+                        Check.msg(1,'发送失败');
+                    }
+                }
+            })
+        }
+    }
+
+
+    function voiceshibie(){
+        if(flag_sb){
+            flag_sb=false;
+            document.getElementById('record').classList.add("on");
+            document.getElementById('record_msg').innerText='正在录音，点击结束';
+            wx.startRecord();
+        }else {
+            flag_sb=true;
+            document.getElementById('record').classList.remove("on");
+            document.getElementById('record_msg').innerText='点击按钮，语音输入';
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            document.getElementById('content_pre').insertAdjacentText('beforeend',res.translateResult);
+                        }
+                    });
+                }
+            });
+        }
+    }
+</script>
+
+</html>
